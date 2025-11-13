@@ -1,3 +1,7 @@
+import passport from 'passport';
+
+export const authenticate = passport.authenticate('local',{session:true});
+
 export const ensureAuthenticated = (req, res, next) => {
   if (req.isAuthenticated()) {
     return next(); 
