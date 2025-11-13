@@ -28,10 +28,10 @@ initializePassport(passport);
 app.use(passport.initialize());
 app.use(passport.session());
 
-app.get("/", (req, res) => res.send("API running"));
+app.get("/", (req, res) => res.send({message:"API running"}));
 
 app.use("/api/users", userRoutes);
-app.use("api/bus",busRoutes);
+app.use("/api/bus",busRoutes);
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`Server running on ${PORT}`));

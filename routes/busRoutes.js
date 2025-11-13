@@ -3,6 +3,6 @@ import { searchBus } from "../controllers/busController.js";
 
 const busRoutes = express.Router();
 
-busRoutes.get("/search", searchBus);
+busRoutes.post("/search", searchBus);
 
 export default busRoutes;
