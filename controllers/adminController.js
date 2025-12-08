@@ -1,39 +1,51 @@
-import Admin from "../models/Admin.js";
+import Admin from "../models/admin.js";
 import jwt from "jsonwebtoken";
 import bcrypt from "bcryptjs";
 
 
 export const registerAdmin = async (req, res) => {
   try {
-    const { name, email, phone_no, password } = req.body;
+    const { name, email, phone_no, password, confirm_password } = req.body;
+
+    if (password !== confirm_password) {
+      return res.status(400).json({ message: "Passwords do not match" });
+    }
 
     const exists = await Admin.findOne({ email });
-    if (exists)
-      return res.status(400).json({ message: "Admin already exists." });
+    if (exists) {
+      return res.status(400).json({ message: "Admin already exists" });
+    }
+
+    const hashedPassword = await bcrypt.hash(password, 10);
 
     const admin = await Admin.create({
       name,
-      email,
+      email: email.toLowerCase().trim(),
       phone_no,
-      password,
+      password: hashedPassword,
       isAdmin: true,
     });
 
-    res.status(201).json({
+    const token = jwt.sign(
+      { id: admin._id, isAdmin: true },
+      process.env.JWT_SECRET,
+      { expiresIn: "30d" }
+    );
+
+    return res.status(201).json({
       message: "Admin registered successfully",
       admin: {
         id: admin._id,
         name: admin.name,
-        email: admin.email,
-      }
+        email: admin.email
+      },
+      token
     });
   } catch (err) {
-    console.error("Admin Registration Error:", err);
-    res.status(500).json({ message: "Server error" });
+    return res.status(500).json({ message: "Server error" });
   }
 };
 
-// 🟦 Admin Login
 export const loginAdmin = async (req, res) => {
   try {
     const { email, password } = req.body;

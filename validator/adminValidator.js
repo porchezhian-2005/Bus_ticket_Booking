@@ -6,28 +6,37 @@ export const adminRegisterSchema = Joi.object({
 
   email: Joi.string()
     .email()
-    .lowercase()   
+    .lowercase()
     .required(),
 
   phone_no: Joi.string()
-    .pattern(/^[0-9]{10}$/)  
+    .pattern(/^[0-9]{10}$/)
     .required()
     .messages({
       "string.pattern.base": "Phone number must be exactly 10 digits"
     }),
 
   password: Joi.string()
-    .min(8) 
-    .pattern(/[A-Z]/)   
-    .pattern(/[a-z]/)   
-    .pattern(/[0-9]/)   
-    .pattern(/[!@#$%^&*(),.?":{}|<>]/) 
+    .min(8)
+    .pattern(/[A-Z]/)
+    .pattern(/[a-z]/)
+    .pattern(/[0-9]/)
+    .pattern(/[!@#$%^&*(),.?":{}|<>]/)
     .required()
     .messages({
       "string.pattern.base":
-        "Password must include uppercase, lowercase, number, and special character",
+        "Password must include uppercase, lowercase, number, and special character"
     }),
+
+  confirm_password: Joi.string()
+    .valid(Joi.ref("password"))
+    .required()
+    .messages({
+      "any.only": "Passwords do not match"
+    })
+
 }).options({ stripUnknown: true });
+
 
 
 export const adminLoginSchema = Joi.object({
