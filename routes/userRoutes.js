@@ -1,29 +1,60 @@
 import express from "express";
+import validateRequest from "../middlewares/validationMiddleware.js";
+import authMiddleware from "../middlewares/authMiddleware.js";
 import passport from "passport";
+
 import {
   registerUser,
-  verifyOtp,
-  loginSuccess,
-  logoutUser,
-  getProfile,
-  updateProfile,
+  loginController,
+  logoutController,
+  verifyEmail,
   forgotPassword,
-  resetPassword
+  resetPassword,
+  viewProfile,
+  updateProfile,
+  sendMobileOtp,
+  resendOtpController,
+  verifyMobileOtp,
 } from "../controllers/userController.js";
+
+import {
+  registerSchema,
+  loginSchema,
+  verifyEmailSchema,
+  forgotPasswordSchema,
+  resetPasswordSchema,
+  updateProfileSchema,
+  sendMobileOtpSchema,
+  verifyMobileOtpSchema,
+} from "../validator/authValidator.js";
 
 const router = express.Router();
 
-router.post("/register", registerUser);
-router.post("/verify-otp", verifyOtp);
+router.post("/register", validateRequest(registerSchema), registerUser);
 
-router.post("/login", passport.authenticate("local"), loginSuccess);
+router.post(
+  "/login",
+  validateRequest(loginSchema),
+  passport.authenticate("local", { session: true }),
+  loginController
+);
 
-router.get("/logout", logoutUser);
+router.get("/logout", logoutController);
 
-router.get("/profile", getProfile);
-router.put("/profile", updateProfile);
+router.post("/verify-email", validateRequest(verifyEmailSchema), verifyEmail);
 
-router.post("/forgot-password", forgotPassword);
-router.post("/reset-password", resetPassword);
+router.post("/forgot-password", validateRequest(forgotPasswordSchema), forgotPassword);
+
+router.post("/reset-password", validateRequest(resetPasswordSchema), resetPassword);
+
+router.get("/profile", authMiddleware, viewProfile);
+
+router.put("/update", authMiddleware, validateRequest(updateProfileSchema), updateProfile);
+
+router.post("/send-mobile-otp", validateRequest(sendMobileOtpSchema), sendMobileOtp);
+
+router.post("/resend-otp", validateRequest(forgotPasswordSchema), resendOtpController);
+
+router.post("/verify-mobile-otp", validateRequest(verifyMobileOtpSchema), verifyMobileOtp);
 
 export default router;

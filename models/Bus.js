@@ -1,32 +1,46 @@
-import mongoose from "mongoose";
+import mongoose from 'mongoose';
 
 const busSchema = new mongoose.Schema({
-  bus_name: 
-  { 
-    type: String, 
-    required: true },
-  source: 
-  { type: String, 
-    required: true },
-  destination: 
-  { type: String, 
-    required: true },
-  departure_time: 
-  { type: String,
-    required: true },
-  arrival_time: 
-  { type: String, 
-    required: true },
-  total_seats: 
-  { type: Number, 
-    required: true },
-  available_seats: 
-  { type: Number, 
-    required: true },
-  fare: 
-  { type: Number, 
-    required: true }
-});
+ routeId: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Route',
+        required: true,
+    },
+    busType: { 
+        type: String, 
+        required: true, 
+        enum: ['AC Seater', 'AC Sleeper', 'Non-AC Seater', 'Non-AC Sleeper'] 
+    },
+    operatorName: { 
+        type: String, 
+        required: true 
+    },
+    departureTime: { 
+        type: String, 
+        required: true 
+    },
+   
+    arrivalTime: { 
+        type: String, 
+        required: true 
+    },
+    duration: { 
+        type: String, 
+        required: true 
+    },
+    baseFare: { 
+        type: Number, 
+        required: true 
+    },
+    totalSeats: { 
+        type: Number, 
+        required: true 
+    },
+    seatsAvailable: { 
+        type: Number, 
+        required: true 
+    },
+}, { timestamps: true });
 
-const Bus = mongoose.model("Bus", busSchema);
+const Bus = mongoose.model('Bus', busSchema);
 export default Bus;

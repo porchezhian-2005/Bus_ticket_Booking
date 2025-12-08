@@ -1,8 +1,24 @@
+
+
 import express from "express";
-import { searchBus } from "../controllers/busController.js";
+import  validateRequest  from "../middlewares/validationMiddleware.js";
 
-const busRoutes = express.Router();
 
-busRoutes.post("/search", searchBus);
+import { createBusSchema } from "../validator/busValidator.js";
+import {
+  createBus,
+  getAllBuses,
+  getBusById,
+} from "../controllers/busController.js";
+import { authMiddleware } from "../middlewares/authMiddleware.js";
 
-export default busRoutes;
+const router = express.Router();
+
+router.post("/buses", authMiddleware, validateRequest(createBusSchema), createBus);
+router.get("/", getAllBuses);
+router.get("/:busId", getBusById);
+
+export default router;
+
+
+
